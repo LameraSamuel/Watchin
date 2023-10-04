@@ -209,3 +209,4 @@ def get_vehicle_data_by_model_saida(modelo):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
+#teste de commit
