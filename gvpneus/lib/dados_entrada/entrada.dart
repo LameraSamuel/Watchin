@@ -11,11 +11,24 @@ class Entrada extends StatefulWidget {
 }
 
 class _EntradaState extends State<Entrada> {
+  final loginController = TextEditingController();
+  final senhaController = TextEditingController();
+
+  // Controladores para os campos de data e hora
+  TextEditingController dataController = TextEditingController();
+  TextEditingController horaController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Preencha os controladores com os valores atuais
+    dataController.text =
+        "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+    horaController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
+  }
+
   @override
   Widget build(BuildContext context) {
-    final loginController = TextEditingController();
-    final senhaController = TextEditingController();
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: SingleChildScrollView(
@@ -40,15 +53,16 @@ class _EntradaState extends State<Entrada> {
                     child: Center(
                       child: SingleChildScrollView(
                         child: Column(
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
                               child: Text(
                                 'DADOS DE ENTRADA',
                                 style: TextStyle(
-                                    color: Colors.black,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25),
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 25,
+                                ),
                               ),
                             ),
                             Line(
@@ -59,9 +73,11 @@ class _EntradaState extends State<Entrada> {
                             ),
                             Line(
                               hintText: 'DATA ENTRADA',
+                              controller: dataController,
                             ),
                             Line(
                               hintText: 'HORARIO ENTRADA',
+                              controller: horaController,
                             ),
                             Line(
                               hintText: 'DOCUMENTO MOTORISTA',

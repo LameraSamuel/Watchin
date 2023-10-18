@@ -4,13 +4,29 @@ import 'package:gvpneus/Line/line.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
 
 class Saida extends StatefulWidget {
-  const Saida({super.key});
+  const Saida({Key? key}) : super(key: key);
 
   @override
   State<Saida> createState() => _SaidaState();
 }
 
 class _SaidaState extends State<Saida> {
+  final loginController = TextEditingController();
+  final senhaController = TextEditingController();
+
+  // Controladores para os campos de data e hora
+  TextEditingController dataController = TextEditingController();
+  TextEditingController horaController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Preencha os controladores com os valores atuais
+    dataController.text =
+        "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
+    horaController.text = "${DateTime.now().hour}:${DateTime.now().minute}";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +53,7 @@ class _SaidaState extends State<Saida> {
                     child: Center(
                       child: SingleChildScrollView(
                         child: Column(
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
                               child: Text(
@@ -50,9 +66,11 @@ class _SaidaState extends State<Saida> {
                             ),
                             Line(
                               hintText: 'DATA SAIDA',
+                              controller: dataController,
                             ),
                             Line(
                               hintText: 'HORARIO SAIDA',
+                              controller: horaController,
                             ),
                             Line(
                               hintText: 'PLACA',

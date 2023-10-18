@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 
 class Line extends StatelessWidget {
+  final String hintText;
+  final double width;
+  final double height;
+  final TextEditingController? controller;
+
   const Line({
     Key? key,
     required this.hintText,
     this.width = 400,
     this.height = 80,
+    this.controller, // Adicione o controlador
   }) : super(key: key);
-
-  final String hintText;
-  final double width;
-  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +21,7 @@ class Line extends StatelessWidget {
         width: width,
         height: height,
         child: TextFormField(
+          controller: controller, // Use o controlador fornecido
           decoration: InputDecoration(
             hintText: hintText,
             border: OutlineInputBorder(
