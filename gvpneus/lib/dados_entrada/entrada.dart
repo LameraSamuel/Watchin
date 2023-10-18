@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gvpneus/profilebar/profilebar.dart';
-import 'package:gvpneus/snackbar/snackbar.dart';
-import 'package:gvpneus/module/module.dart';
 import 'package:gvpneus/Line/line.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
 
@@ -14,14 +12,13 @@ class _EntradaState extends State<Entrada> {
   final loginController = TextEditingController();
   final senhaController = TextEditingController();
 
-  // Controladores para os campos de data e hora
   TextEditingController dataController = TextEditingController();
   TextEditingController horaController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Preencha os controladores com os valores atuais
+
     dataController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     horaController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";

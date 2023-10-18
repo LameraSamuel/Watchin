@@ -11,7 +11,7 @@ class Line extends StatelessWidget {
     required this.hintText,
     this.width = 400,
     this.height = 80,
-    this.controller, // Adicione o controlador
+    this.controller,
   }) : super(key: key);
 
   @override
@@ -21,7 +21,7 @@ class Line extends StatelessWidget {
         width: width,
         height: height,
         child: TextFormField(
-          controller: controller, // Use o controlador fornecido
+          controller: controller,
           decoration: InputDecoration(
             hintText: hintText,
             border: OutlineInputBorder(
