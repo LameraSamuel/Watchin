@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gvpneus/profilebar/profilebar.dart';
-import 'package:gvpneus/snackbar/snackbar.dart';
+import 'package:gvpneus/camera/camera.dart';
 import 'package:gvpneus/module/module.dart';
+import 'package:gvpneus/profilebar/profilebar.dart';
 
 class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
@@ -33,8 +33,11 @@ class Home extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
-                            onTap: () =>
-                                Navigator.of(context).pushNamed('/Entrada'),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CameraPage(isEntrada: true))),
                             child: ModuleCard(
                               iconModule: 'assets/Direita.png',
                               textModule: 'ENTRADA',
@@ -45,8 +48,11 @@ class Home extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
-                            onTap: () =>
-                                Navigator.of(context).pushNamed('/Saida'),
+                            onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        CameraPage(isEntrada: false))),
                             child: ModuleCard(
                               iconModule: 'assets/esquerda.png',
                               textModule: 'SAIDA',
