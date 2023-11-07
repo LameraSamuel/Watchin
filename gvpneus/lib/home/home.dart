@@ -150,6 +150,7 @@ class _LoginState extends State<Login> {
       print("Login realizado com sucesso");
       Navigator.of(context).pushNamed('/homepage');
     } else {
+      // ignore: use_build_context_synchronously
       showDialog(
         context: context,
         builder: (BuildContext context) {
