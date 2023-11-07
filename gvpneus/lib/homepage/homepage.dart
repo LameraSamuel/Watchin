@@ -33,11 +33,8 @@ class Home extends StatelessWidget {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: GestureDetector(
-                            onTap: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        CameraPage(isEntrada: true))),
+                            onTap: () =>
+                                Navigator.pushNamed(context, '/Entrada'),
                             child: ModuleCard(
                               iconModule: 'assets/Direita.png',
                               textModule: 'ENTRADA',

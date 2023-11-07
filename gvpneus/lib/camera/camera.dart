@@ -29,7 +29,9 @@ class CameraPage extends StatelessWidget {
           aspectRatio: CameraAspectRatios.ratio_16_9,
           previewFit: CameraPreviewFit.fitWidth,
           onMediaTap: (mediaCapture) {
-            Navigator.pushNamed(context, '/Entrada');
+            isEntrada
+                ? Navigator.pushNamed(context, '/Entrada')
+                : Navigator.pushNamed(context, '/Saida');
           },
         ),
       ),

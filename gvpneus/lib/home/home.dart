@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:gvpneus/homepage/homepage.dart';
+import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
+  const Login({super.key});
+
   @override
   State<Login> createState() => _LoginState();
 }
@@ -16,7 +18,7 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.fromARGB(255, 0, 0, 0),
+      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -48,9 +50,9 @@ class _LoginState extends State<Login> {
                     fontSize: 25),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 7),
-              child: const Text(
+            const Padding(
+              padding: EdgeInsets.only(bottom: 7),
+              child: Text(
                 'Digite seus dados para entrar',
                 textAlign: TextAlign.center,
                 style: TextStyle(
@@ -108,16 +110,15 @@ class _LoginState extends State<Login> {
                 child: ElevatedButton(
                   onPressed: () {
                     setState(() {
-                      //fetchAlbum(loginController.text, senhaController.text)
-                      Navigator.of(context).pushNamed('/homepage');
+                      loginUser();
                     });
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Color.fromARGB(255, 234, 255, 0),
+                    backgroundColor: const Color.fromARGB(255, 234, 255, 0),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40.0)),
                   ),
-                  child: Text(
+                  child: const Text(
                     "ENTRAR",
                     style: TextStyle(
                         color: Colors.black,
@@ -131,5 +132,23 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  void loginUser() async {
+    final response =
+        await http.get(Uri.parse('http://localhost:5000/login/$emailValue'));
+    final bodyMap = jsonDecode(utf8.decode(response.bodyBytes));
+    if (response.statusCode == 200) {
+      print("Login realizado com sucesso");
+      Navigator.of(context).pushNamed('/homepage');
+    } else {
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const AlertDialog(
+              title: Text('Erro'),
+            );
+          });
+    }
   }
 }

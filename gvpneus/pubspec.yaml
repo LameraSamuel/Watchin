@@ -37,6 +37,7 @@ dependencies:
   camerawesome: ^1.4.0
   better_open_file: ^3.6.4
   path_provider: ^2.1.1
+  http: ^1.1.0
 
 dev_dependencies:
   flutter_test:
