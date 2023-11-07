@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Line/line.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
+import 'package:http/http.dart' as http;
 
 class Entrada extends StatefulWidget {
   @override
@@ -9,8 +11,8 @@ class Entrada extends StatefulWidget {
 }
 
 class _EntradaState extends State<Entrada> {
-  final loginController = TextEditingController();
-  final senhaController = TextEditingController();
+  final placaController = TextEditingController();
+  final modeloController = TextEditingController();
 
   TextEditingController dataController = TextEditingController();
   TextEditingController horaController = TextEditingController();
@@ -22,6 +24,36 @@ class _EntradaState extends State<Entrada> {
     dataController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     horaController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
+  }
+
+  void fetchModelo(String placa) async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://wdapi2.com.br/consulta/GPJ1534/0b03c72e243f3809d90524612e92948a?placa=$placa'));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final modelo = responseData['modelo'];
+
+        setState(() {
+          modeloController.text = modelo;
+        });
+      } else {
+        print('Error fetching modelo: ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro ao buscar modelo do veículo'),
+          ),
+        );
+      }
+    } on Exception catch (e) {
+      print('Error fetching modelo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro na conexão com o servidor'),
+        ),
+      );
+    }
   }
 
   @override
@@ -64,9 +96,15 @@ class _EntradaState extends State<Entrada> {
                             ),
                             Line(
                               hintText: 'PLACA',
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  fetchModelo(value);
+                                }
+                              },
                             ),
                             Line(
                               hintText: 'MODELO VEICULO',
+                              controller: modeloController,
                             ),
                             Line(
                               hintText: 'DATA ENTRADA',

@@ -5,6 +5,7 @@ class Line extends StatelessWidget {
   final double width;
   final double height;
   final TextEditingController? controller;
+  final void Function(String)? onChanged;
 
   const Line({
     Key? key,
@@ -12,6 +13,7 @@ class Line extends StatelessWidget {
     this.width = 400,
     this.height = 80,
     this.controller,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -22,6 +24,7 @@ class Line extends StatelessWidget {
         height: height,
         child: TextFormField(
           controller: controller,
+          onChanged: onChanged,
           decoration: InputDecoration(
             hintText: hintText,
             border: OutlineInputBorder(
