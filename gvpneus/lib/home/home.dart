@@ -1,10 +1,9 @@
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class Login extends StatefulWidget {
-  const Login({super.key});
+  const Login({Key? key}) : super(key: key);
 
   @override
   State<Login> createState() => _LoginState();
@@ -14,6 +13,7 @@ class _LoginState extends State<Login> {
   final loginController = TextEditingController();
   final senhaController = TextEditingController();
   String emailValue = '';
+  String errorText = '';
 
   @override
   Widget build(BuildContext context) {
@@ -23,13 +23,6 @@ class _LoginState extends State<Login> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            // SizedBox(
-            //   width: MediaQuery.of(context).size.width,
-            //   child: Image.asset(
-            //     'assets/logo.png',
-            //     fit: BoxFit.fitWidth,
-            //   ),
-            // ),
             Padding(
               padding: const EdgeInsets.only(top: 100),
               child: SizedBox(
@@ -70,12 +63,6 @@ class _LoginState extends State<Login> {
                   setState(() {
                     emailValue = value;
                   });
-                },
-                validator: (value) {
-                  if (value == null || !value.contains("@")) {
-                    return "Gentileza informar um e-mail válido!";
-                  }
-                  return null;
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 decoration: InputDecoration(
@@ -128,6 +115,16 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
+            if (errorText.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  errorText,
+                  style: TextStyle(
+                    color: Colors.red,
+                  ),
+                ),
+              ),
           ],
         ),
       ),
@@ -135,20 +132,42 @@ class _LoginState extends State<Login> {
   }
 
   void loginUser() async {
+    final email = loginController.text;
+    final senha = senhaController.text;
+
+    if (email.isEmpty) {
+      setState(() {
+        errorText = 'Por favor, preencha o campo de e-mail';
+      });
+      return;
+    }
+
     final response =
-        await http.get(Uri.parse('http://localhost:5000/login/$emailValue'));
+        await http.get(Uri.parse('http://192.168.0.19:5000/login/$email'));
     final bodyMap = jsonDecode(utf8.decode(response.bodyBytes));
+
     if (response.statusCode == 200) {
       print("Login realizado com sucesso");
       Navigator.of(context).pushNamed('/homepage');
     } else {
       showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return const AlertDialog(
-              title: Text('Erro'),
-            );
-          });
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Erro de login'),
+            content:
+                Text('Falha ao efetuar o login. Verifique suas credenciais.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
     }
   }
 }
