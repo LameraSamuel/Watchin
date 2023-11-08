@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -33,14 +34,17 @@ class _LoginState extends State<Login> {
                 ),
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.only(top: 80, bottom: 5),
-              child: Text(
-                'LOGIN',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 25),
+            Padding(
+              padding: const EdgeInsets.only(top: 80, bottom: 5),
+              child: GestureDetector(
+                onDoubleTap: () => Navigator.of(context).pushNamed('/homepage'),
+                child: const Text(
+                  'LOGIN',
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 25),
+                ),
               ),
             ),
             const Padding(
@@ -96,9 +100,7 @@ class _LoginState extends State<Login> {
                 height: 50.0,
                 child: ElevatedButton(
                   onPressed: () {
-                    setState(() {
-                      loginUser();
-                    });
+                    loginUser();
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromARGB(255, 234, 255, 0),
@@ -120,7 +122,7 @@ class _LoginState extends State<Login> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   errorText,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.red,
                   ),
                 ),
@@ -146,24 +148,96 @@ class _LoginState extends State<Login> {
         await http.get(Uri.parse('http://192.168.0.19:5000/login/$email'));
     final bodyMap = jsonDecode(utf8.decode(response.bodyBytes));
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 && bodyMap['password'] == senha) {
       print("Login realizado com sucesso");
       Navigator.of(context).pushNamed('/homepage');
-    } else {
-      // ignore: use_build_context_synchronously
+    } else if (response.statusCode == 204) {
       showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Erro de login'),
-            content:
-                Text('Falha ao efetuar o login. Verifique suas credenciais.'),
+            title: const Text('Erro de login'),
+            content: const Text('Login não encontrado.'),
             actions: <Widget>[
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: Text('Fechar'),
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else if (response.statusCode == 400) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro de login'),
+            content: const Text('Confira os dados digitados.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else if (response.statusCode == 404) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro de login'),
+            content: const Text('Login não encontrado.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else if (response.statusCode == 500) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro de conexão'),
+            content:
+                const Text('Problema de conexão. Tente novamente mais tarde.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro de login'),
+            content: const Text(
+                'Falha ao efetuar o login. Verifique suas credenciais.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
               ),
             ],
           );
