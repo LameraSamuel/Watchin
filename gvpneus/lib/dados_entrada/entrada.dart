@@ -13,6 +13,9 @@ class Entrada extends StatefulWidget {
 class _EntradaState extends State<Entrada> {
   final placaController = TextEditingController();
   final modeloController = TextEditingController();
+  final nomeController = TextEditingController();
+  final cpfController = TextEditingController();
+  final documentoController = TextEditingController();
 
   TextEditingController dataController = TextEditingController();
   TextEditingController horaController = TextEditingController();
@@ -48,6 +51,40 @@ class _EntradaState extends State<Entrada> {
       }
     } on Exception catch (e) {
       print('Error fetching modelo: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro na conexão com o servidor'),
+        ),
+      );
+    }
+  }
+
+  void fetchNome(String cpf) async {
+    final url =
+        'https://api.cpfcnpj.com.br/ecacbabd05bd4699954d21876bb9c506/9/$cpf';
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final nome = responseData['nome'];
+
+        final nomeExibido = nome.length <= 30 ? nome : nome.substring(0, 30);
+
+        setState(() {
+          nomeController.text = nomeExibido;
+        });
+      } else {
+        print(
+            'Erro na solicitação: ${response.reasonPhrase} (${response.statusCode})');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Erro na conexão com o servidor'),
+          ),
+        );
+      }
+    } on Exception catch (e) {
+      print('Erro na solicitação: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Erro na conexão com o servidor'),
@@ -101,6 +138,7 @@ class _EntradaState extends State<Entrada> {
                                   fetchModelo(value);
                                 }
                               },
+                              controller: placaController,
                             ),
                             Line(
                               hintText: 'MODELO VEICULO',
@@ -116,15 +154,16 @@ class _EntradaState extends State<Entrada> {
                             ),
                             Line(
                               hintText: 'DOCUMENTO MOTORISTA',
+                              onChanged: (value) {
+                                if (value.isNotEmpty && value.length >= 11) {
+                                  fetchNome(value);
+                                }
+                              },
+                              controller: cpfController,
                             ),
                             Line(
                               hintText: 'NOME MOTORISTA',
-                            ),
-                            Line(
-                              hintText: 'DOCUMENTO AJUDANTE',
-                            ),
-                            Line(
-                              hintText: 'NOME AJUDANTE',
+                              controller: nomeController,
                             ),
                           ],
                         ),

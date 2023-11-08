@@ -9,7 +9,7 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 cred = credentials.Certificate(
-    "C:/SGC/backend/gvpneus-d819b-firebase-adminsdk-ticn0-b08252d37a.json"
+    "C:/back sgc/gvpneus-d819b-firebase-adminsdk-ticn0-b08252d37a.json"
 )
 firebase_admin.initialize_app(
     cred, {"databaseURL": "https://gvpneus-d819b-default-rtdb.firebaseio.com/"}
@@ -77,8 +77,8 @@ def save_vehicle_data():
     horario_entrada = data.get("horario_entrada")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
-    documento_ajudante = data.get("documento_ajudante")
-    nome_ajudante = data.get("nome_ajudante")
+    # documento_ajudante = data.get("documento_ajudante")
+    # nome_ajudante = data.get("nome_ajudante")
 
     if (
         placa
@@ -87,8 +87,8 @@ def save_vehicle_data():
         and horario_entrada
         and documento_motorista
         and nome_motorista
-        and documento_ajudante
-        and nome_ajudante
+        # and documento_ajudante
+        # and nome_ajudante
     ):
         try:
             ref = db.reference("/Veiculos_entrada")
@@ -101,8 +101,8 @@ def save_vehicle_data():
                     "HorarioEntrada": horario_entrada,
                     "DocumentoMotorista": documento_motorista,
                     "NomeMotorista": nome_motorista,
-                    "DocumentoAjudante": documento_ajudante,
-                    "NomeAjudante": nome_ajudante,
+                    # "DocumentoAjudante": documento_ajudante,
+                    # "NomeAjudante": nome_ajudante,
                 }
             )
             logging.info("Dados do veículo salvos com sucesso.")
@@ -142,12 +142,13 @@ def save_vehicle_data_saida():
     modelo = data.get("modelo")
     data_entrada = data.get("data_entrada")
     horario_entrada = data.get("horario_entrada")
+    horario_saida = data.get("horario_saida")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
-    documento_ajudante = data.get("documento_ajudante")
-    nome_ajudante = data.get("nome_ajudante")
-    data_saida = data.get("data_saida")  # Novo campo: Data de saída
-    horario_saida = data.get("horario_saida")  # Novo campo: Horário de saída
+    # documento_ajudante = data.get("documento_ajudante")
+    # nome_ajudante = data.get("nome_ajudante")
+    data_saida = data.get("data_saida")
+    horario_saida = data.get("horario_saida")
 
     if (
         placa
@@ -156,13 +157,13 @@ def save_vehicle_data_saida():
         and horario_entrada
         and documento_motorista
         and nome_motorista
-        and documento_ajudante
-        and nome_ajudante
+        # and documento_ajudante
+        # and nome_ajudante
         and data_saida
         and horario_saida
     ):
         try:
-            ref = db.reference("/Veiculos_saida")  # Mudou para Veiculos_saida
+            ref = db.reference("/Veiculos_saida")
             new_vehicle_ref = ref.push()
             new_vehicle_ref.set(
                 {
@@ -172,10 +173,10 @@ def save_vehicle_data_saida():
                     "HorarioEntrada": horario_entrada,
                     "DocumentoMotorista": documento_motorista,
                     "NomeMotorista": nome_motorista,
-                    "DocumentoAjudante": documento_ajudante,
-                    "NomeAjudante": nome_ajudante,
-                    "DataSaida": data_saida,  # Novo campo: Data de saída
-                    "HorarioSaida": horario_saida,  # Novo campo: Horário de saída
+                    # "DocumentoAjudante": documento_ajudante,
+                    # "NomeAjudante": nome_ajudante,
+                    "DataSaida": data_saida,
+                    "HorarioSaida": horario_saida,
                 }
             )
             logging.info("Dados do veículo salvos com sucesso.")
@@ -209,4 +210,3 @@ def get_vehicle_data_by_model_saida(modelo):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-#teste de commit
