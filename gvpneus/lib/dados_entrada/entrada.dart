@@ -61,7 +61,7 @@ class _EntradaState extends State<Entrada> {
 
   void fetchNome(String cpf) async {
     final url =
-        'https://api.cpfcnpj.com.br/ecacbabd05bd4699954d21876bb9c506/9/$cpf';
+        'https://api.cpfcnpj.com.br/4fa6db123243984324f58d673a1c2ad8/9/$cpf';
     try {
       final response = await http.get(Uri.parse(url));
 
