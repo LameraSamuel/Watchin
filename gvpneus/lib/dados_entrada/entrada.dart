@@ -20,6 +20,8 @@ class _EntradaState extends State<Entrada> {
   TextEditingController dataController = TextEditingController();
   TextEditingController horaController = TextEditingController();
 
+  bool dadosEnviadosComSucesso = false;
+
   @override
   void initState() {
     super.initState();
@@ -42,21 +44,14 @@ class _EntradaState extends State<Entrada> {
           modeloController.text = modelo;
         });
       } else {
-        print('Error fetching modelo: ${response.statusCode}');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro ao buscar modelo do veículo'),
-          ),
-        );
+        // print('Error fetching modelo: ${response.statusCode}');
+        // ScaffoldMessenger.of(context).showSnackBar(
+        //   const SnackBar(
+        //     content: Text('Erro ao buscar modelo do veículo'),
+        //   ),
+        // );
       }
-    } on Exception catch (e) {
-      print('Error fetching modelo: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro na conexão com o servidor'),
-        ),
-      );
-    }
+    } on Exception catch (e) {}
   }
 
   void fetchNome(String cpf) async {
@@ -77,23 +72,13 @@ class _EntradaState extends State<Entrada> {
       } else {
         print(
             'Erro na solicitação: ${response.reasonPhrase} (${response.statusCode})');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Erro na conexão com o servidor'),
-          ),
-        );
       }
     } on Exception catch (e) {
       print('Erro na solicitação: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro na conexão com o servidor'),
-        ),
-      );
     }
   }
 
-  void enviarDadosParaEndpoint() async {
+  Future<bool> enviarDadosParaEndpoint() async {
     final url = Uri.parse('http://192.168.0.18:5000/veiculos_entrada');
 
     final body = {
@@ -115,26 +100,16 @@ class _EntradaState extends State<Entrada> {
         body: json.encode(body),
       );
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Dados enviados com sucesso'),
-          ),
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          dadosEnviadosComSucesso = true;
+        });
+        return true;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao enviar dados: ${response.statusCode}'),
-          ),
-        );
+        return false;
       }
     } catch (e) {
-      print('Erro ao enviar dados: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro na conexão com o servidor'),
-        ),
-      );
+      return false;
     }
   }
 

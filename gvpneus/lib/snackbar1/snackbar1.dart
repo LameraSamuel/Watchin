@@ -26,17 +26,22 @@ class Snack extends StatelessWidget {
                   color: Colors.black,
                 ),
                 backgroundColor: Colors.green,
-                onPressed: () {
-                  enviarDadosParaEndpoint();
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => TelaConfirmacao(
-                        mensagem: 'USUARIO',
-                        rota: false,
+                onPressed: () async {
+                  bool sucesso = await enviarDadosParaEndpoint();
+                  if (sucesso) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => TelaConfirmacao(
+                          mensagem: 'USUARIO',
+                          rota: false,
+                        ),
                       ),
-                    ),
-                  );
+                    );
+                  } else {
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => Erro()));
+                  }
                 },
               ),
             ),

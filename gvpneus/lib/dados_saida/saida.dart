@@ -22,6 +22,8 @@ class _SaidaState extends State<Saida> {
   final documentoMotoristaController = TextEditingController();
   final nomeMotoristaController = TextEditingController();
 
+  bool dadosEnviadosComSucesso = false;
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +33,7 @@ class _SaidaState extends State<Saida> {
         "${DateTime.now().hour}:${DateTime.now().minute}";
   }
 
-  void enviarDadosParaEndpoints() async {
+  Future<bool> enviarDadosParaEndpoints() async {
     final url = Uri.parse('http://192.168.0.18:5000/veiculos_saida');
 
     final body = {
@@ -58,26 +60,16 @@ class _SaidaState extends State<Saida> {
 
       print("Resposta do servidor: ${response.body}");
 
-      if (response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Dados enviados com sucesso'),
-          ),
-        );
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        setState(() {
+          dadosEnviadosComSucesso = true;
+        });
+        return true;
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Erro ao enviar dados: ${response.statusCode}'),
-          ),
-        );
+        return false;
       }
     } catch (e) {
-      print('Erro ao enviar dados: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Erro na conexão com o servidor'),
-        ),
-      );
+      return false;
     }
   }
 
