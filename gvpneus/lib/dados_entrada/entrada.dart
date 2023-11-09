@@ -89,6 +89,7 @@ class _EntradaState extends State<Entrada> {
       "horario_entrada": "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}",
       "documento_motorista": cpfController.text,
       "nome_motorista": nomeController.text,
+      "CampoInt": "1",
     };
 
     final headers = {'Content-Type': 'application/json'};

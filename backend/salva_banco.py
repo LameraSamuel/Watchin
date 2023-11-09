@@ -77,6 +77,7 @@ def save_vehicle_data():
     horario_entrada = data.get("horario_entrada")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
+    campo_int = data.get("campo_int", 1)
     # documento_ajudante = data.get("documento_ajudante")
     # nome_ajudante = data.get("nome_ajudante")
 
@@ -101,6 +102,7 @@ def save_vehicle_data():
                     "HorarioEntrada": horario_entrada,
                     "DocumentoMotorista": documento_motorista,
                     "NomeMotorista": nome_motorista,
+                    "CampoInt": campo_int,
                     # "DocumentoAjudante": documento_ajudante,
                     # "NomeAjudante": nome_ajudante,
                 }
