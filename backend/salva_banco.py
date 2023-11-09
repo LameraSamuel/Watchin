@@ -142,11 +142,8 @@ def save_vehicle_data_saida():
     modelo = data.get("modelo")
     data_entrada = data.get("data_entrada")
     horario_entrada = data.get("horario_entrada")
-    horario_saida = data.get("horario_saida")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
-    # documento_ajudante = data.get("documento_ajudante")
-    # nome_ajudante = data.get("nome_ajudante")
     data_saida = data.get("data_saida")
     horario_saida = data.get("horario_saida")
 
@@ -157,8 +154,6 @@ def save_vehicle_data_saida():
         and horario_entrada
         and documento_motorista
         and nome_motorista
-        # and documento_ajudante
-        # and nome_ajudante
         and data_saida
         and horario_saida
     ):
@@ -173,8 +168,6 @@ def save_vehicle_data_saida():
                     "HorarioEntrada": horario_entrada,
                     "DocumentoMotorista": documento_motorista,
                     "NomeMotorista": nome_motorista,
-                    # "DocumentoAjudante": documento_ajudante,
-                    # "NomeAjudante": nome_ajudante,
                     "DataSaida": data_saida,
                     "HorarioSaida": horario_saida,
                 }
