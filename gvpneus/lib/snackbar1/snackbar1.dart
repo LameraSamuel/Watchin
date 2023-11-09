@@ -3,8 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:gvpneus/homepage/homepage.dart';
 import 'package:gvpneus/Erro/Erro.dart';
 import 'package:gvpneus/Confirmacao/Confirmacao.dart';
+import 'package:gvpneus/dados_entrada/entrada.dart';
 
 class Snack extends StatelessWidget {
+  final Function enviarDadosParaEndpoint;
+
+  Snack({required this.enviarDadosParaEndpoint});
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -20,15 +25,18 @@ class Snack extends StatelessWidget {
                   Icons.check,
                   color: Colors.black,
                 ),
-                backgroundColor: Colors.green, // Altere a cor de fundo aqui
+                backgroundColor: Colors.green,
                 onPressed: () {
+                  enviarDadosParaEndpoint();
                   Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => TelaConfirmacao(
-                                mensagem: 'USUARIO',
-                                rota: false,
-                              )));
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => TelaConfirmacao(
+                        mensagem: 'USUARIO',
+                        rota: false,
+                      ),
+                    ),
+                  );
                 },
               ),
             ),
@@ -39,7 +47,7 @@ class Snack extends StatelessWidget {
                   Icons.cancel,
                   color: Colors.black,
                 ),
-                backgroundColor: Colors.red, // Altere a cor de fundo aqui
+                backgroundColor: Colors.red,
                 onPressed: () {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (_) => Erro()));

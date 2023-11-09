@@ -93,6 +93,51 @@ class _EntradaState extends State<Entrada> {
     }
   }
 
+  void enviarDadosParaEndpoint() async {
+    final url = Uri.parse('http://192.168.0.18:5000/veiculos_entrada');
+
+    final body = {
+      "placa": placaController.text,
+      "modelo": modeloController.text,
+      "data_entrada":
+          "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}T${TimeOfDay.now().hour}:${TimeOfDay.now().minute}:00Z",
+      "horario_entrada": "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}",
+      "documento_motorista": cpfController.text,
+      "nome_motorista": nomeController.text,
+    };
+
+    final headers = {'Content-Type': 'application/json'};
+
+    try {
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dados enviados com sucesso'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao enviar dados: ${response.statusCode}'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Erro ao enviar dados: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro na conexão com o servidor'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -175,7 +220,9 @@ class _EntradaState extends State<Entrada> {
             ),
             Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Snack(),
+              child: Snack(
+                enviarDadosParaEndpoint: enviarDadosParaEndpoint,
+              ),
             ),
           ],
         ),

@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Line/line.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
+import 'package:http/http.dart' as http;
 
 class Saida extends StatefulWidget {
   const Saida({Key? key}) : super(key: key);
@@ -11,20 +13,72 @@ class Saida extends StatefulWidget {
 }
 
 class _SaidaState extends State<Saida> {
-  final loginController = TextEditingController();
-  final senhaController = TextEditingController();
-
-  // Controladores para os campos de data e hora
-  TextEditingController dataController = TextEditingController();
-  TextEditingController horaController = TextEditingController();
+  final dataSaidaController = TextEditingController();
+  final horarioSaidaController = TextEditingController();
+  final placaController = TextEditingController();
+  final modeloVeiculoController = TextEditingController();
+  final dataEntradaController = TextEditingController();
+  final horarioEntradaController = TextEditingController();
+  final documentoMotoristaController = TextEditingController();
+  final nomeMotoristaController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // Preencha os controladores com os valores atuais
-    dataController.text =
+    dataSaidaController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
-    horaController.text = "${DateTime.now().hour}:${DateTime.now().minute}";
+    horarioSaidaController.text =
+        "${DateTime.now().hour}:${DateTime.now().minute}";
+  }
+
+  void enviarDadosParaEndpoints() async {
+    final url = Uri.parse('http://192.168.0.18:5000/veiculos_saida');
+
+    final body = {
+      "data_saida": dataSaidaController.text,
+      "horario_saida": horarioSaidaController.text,
+      "placa": placaController.text,
+      "modelo": modeloVeiculoController.text,
+      "data_entrada": dataEntradaController.text,
+      "horario_entrada": horarioEntradaController.text,
+      "documento_motorista": documentoMotoristaController.text,
+      "nome_motorista": nomeMotoristaController.text,
+    };
+
+    print("Dados enviados para o backend: $body");
+
+    final headers = {'Content-Type': 'application/json'};
+
+    try {
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: json.encode(body),
+      );
+
+      print("Resposta do servidor: ${response.body}");
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Dados enviados com sucesso'),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao enviar dados: ${response.statusCode}'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Erro ao enviar dados: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Erro na conexão com o servidor'),
+        ),
+      );
+    }
   }
 
   @override
@@ -66,35 +120,35 @@ class _SaidaState extends State<Saida> {
                             ),
                             Line(
                               hintText: 'DATA SAIDA',
-                              controller: dataController,
+                              controller: dataSaidaController,
                             ),
                             Line(
                               hintText: 'HORARIO SAIDA',
-                              controller: horaController,
+                              controller: horarioSaidaController,
                             ),
                             Line(
                               hintText: 'PLACA',
+                              controller: placaController,
                             ),
                             Line(
                               hintText: 'MODELO VEICULO',
+                              controller: modeloVeiculoController,
                             ),
                             Line(
                               hintText: 'DATA ENTRADA',
+                              controller: dataEntradaController,
                             ),
                             Line(
                               hintText: 'HORARIO ENTRADA',
+                              controller: horarioEntradaController,
                             ),
                             Line(
                               hintText: 'DOCUMENTO MOTORISTA',
+                              controller: documentoMotoristaController,
                             ),
                             Line(
                               hintText: 'NOME MOTORISTA',
-                            ),
-                            Line(
-                              hintText: 'DOCUMENTO AJUDANTE',
-                            ),
-                            Line(
-                              hintText: 'NOME AJUDANTE',
+                              controller: nomeMotoristaController,
                             ),
                           ],
                         ),
@@ -106,7 +160,7 @@ class _SaidaState extends State<Saida> {
             ),
             Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Snack(),
+              child: Snack(enviarDadosParaEndpoint: enviarDadosParaEndpoints),
             ),
           ],
         ),
