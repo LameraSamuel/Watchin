@@ -1,11 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Line/line.dart';
+import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
 import 'package:http/http.dart' as http;
 
 class Entrada extends StatefulWidget {
+  String? recognizedText;
+  Entrada({super.key, this.recognizedText});
   @override
   State<Entrada> createState() => _EntradaState();
 }
@@ -25,10 +28,39 @@ class _EntradaState extends State<Entrada> {
   @override
   void initState() {
     super.initState();
+    verifyPlaca();
 
     dataController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     horaController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
+  }
+
+  void verifyPlaca() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (widget.recognizedText!.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro ao escanear a placa'),
+            content: const Text(
+                'A placa não foi reconhecida. Insira-a maanualmente.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      setState(() {
+        placaController.text = widget.recognizedText!;
+      });
+    }
   }
 
   void fetchModelo(String placa) async {
@@ -51,7 +83,7 @@ class _EntradaState extends State<Entrada> {
         //   ),
         // );
       }
-    } on Exception catch (e) {}
+    } on Exception {}
   }
 
   void fetchNome(String cpf) async {
@@ -141,7 +173,7 @@ class _EntradaState extends State<Entrada> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
                               child: Text(
                                 'DADOS DE ENTRADA',

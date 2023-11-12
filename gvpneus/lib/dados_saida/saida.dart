@@ -1,12 +1,14 @@
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Line/line.dart';
+import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/snackbar1/snackbar1.dart';
 import 'package:http/http.dart' as http;
 
 class Saida extends StatefulWidget {
-  const Saida({Key? key}) : super(key: key);
+  String? recognizedText;
+  Saida({this.recognizedText, Key? key}) : super(key: key);
 
   @override
   State<Saida> createState() => _SaidaState();
@@ -27,6 +29,8 @@ class _SaidaState extends State<Saida> {
   @override
   void initState() {
     super.initState();
+
+    verifyPlaca();
     dataSaidaController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     horarioSaidaController.text =
@@ -73,6 +77,34 @@ class _SaidaState extends State<Saida> {
     }
   }
 
+  void verifyPlaca() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (widget.recognizedText!.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro ao escanear a placa'),
+            content: const Text(
+                'A placa não foi reconhecida. Insira-a maanualmente.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      setState(() {
+        placaController.text = widget.recognizedText!;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -100,7 +132,7 @@ class _SaidaState extends State<Saida> {
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            Padding(
+                            const Padding(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
                               child: Text(
                                 'DADOS DE SAIDA',
