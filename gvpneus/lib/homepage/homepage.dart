@@ -64,7 +64,7 @@ class Home extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 90, top: 8),
                           child: GestureDetector(
                             onTap: () =>
-                                Navigator.of(context).pushNamed('/Rel'),
+                                Navigator.of(context).pushNamed('/Saida'),
                             child: ModuleCard(
                               iconModule: 'assets/lupa.png',
                               textModule: 'CONSULTAR',

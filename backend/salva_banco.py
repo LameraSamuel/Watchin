@@ -78,8 +78,6 @@ def save_vehicle_data():
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
     campo_int = data.get("campo_int", 1)
-    # documento_ajudante = data.get("documento_ajudante")
-    # nome_ajudante = data.get("nome_ajudante")
 
     if (
         placa
@@ -88,8 +86,6 @@ def save_vehicle_data():
         and horario_entrada
         and documento_motorista
         and nome_motorista
-        # and documento_ajudante
-        # and nome_ajudante
     ):
         try:
             ref = db.reference("/Veiculos_entrada")
@@ -103,37 +99,35 @@ def save_vehicle_data():
                     "DocumentoMotorista": documento_motorista,
                     "NomeMotorista": nome_motorista,
                     "CampoInt": campo_int,
-                    # "DocumentoAjudante": documento_ajudante,
-                    # "NomeAjudante": nome_ajudante,
                 }
             )
-            logging.info("Dados do veículo salvos com sucesso.")
-            return jsonify({"message": "Dados do veículo salvos com sucesso."}), 201
+            logging.info("Dados do veículo de entrada salvos com sucesso.")
+            return jsonify({"message": "Dados do veículo de entrada salvos com sucesso."}), 201
         except Exception as e:
-            logging.error(f"Erro ao inserir dados do veículo: {str(e)}")
-            return jsonify({"error": "Erro ao inserir dados do veículo."}), 500
+            logging.error(f"Erro ao inserir dados do veículo de entrada: {str(e)}")
+            return jsonify({"error": "Erro ao inserir dados do veículo de entrada."}), 500
     else:
         logging.error("Informe todos os campos obrigatórios.")
         return jsonify({"error": "Informe todos os campos obrigatórios."}), 400
 
 
-# Endpoint para obter dados de veículos pelo modelo Entrada
-@app.route("/Veiculos_entrada/<modelo>", methods=["GET"])
-def get_vehicle_data_by_model(modelo):
+# Endpoint para obter dados de veículos pela placa Entrada
+@app.route("/Veiculos_entrada/<placa>", methods=["GET"])
+def get_vehicle_data_by_placa_entrada(placa):
     try:
         ref = db.reference("/Veiculos_entrada")
-        query = ref.order_by_child("Modelo").equal_to(modelo).limit_to_first(1).get()
+        query = ref.order_by_child("Placa").equal_to(placa).limit_to_first(1).get()
 
         if query:
             vehicle_data = list(query.values())[0]
-            logging.info(f"Dados do veículo encontrados para o modelo: {modelo}")
+            logging.info(f"Dados do veículo de entrada encontrados para a placa: {placa}")
             return jsonify(vehicle_data), 200
         else:
-            logging.error(f"Veículo não encontrado com o modelo: {modelo}")
-            return jsonify({"error": "Veículo não encontrado."}), 404
+            logging.error(f"Veículo de entrada não encontrado com a placa: {placa}")
+            return jsonify({"error": "Veículo de entrada não encontrado."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do veículo: {str(e)}")
-        return jsonify({"error": "Erro ao buscar dados do veículo."}), 500
+        logging.error(f"Erro ao buscar dados do veículo de entrada: {str(e)}")
+        return jsonify({"error": "Erro ao buscar dados do veículo de entrada."}), 500
 
 
 # Endpoint para salvar dados de veículos Saída
@@ -174,33 +168,33 @@ def save_vehicle_data_saida():
                     "HorarioSaida": horario_saida,
                 }
             )
-            logging.info("Dados do veículo salvos com sucesso.")
-            return jsonify({"message": "Dados do veículo salvos com sucesso."}), 201
+            logging.info("Dados do veículo de saída salvos com sucesso.")
+            return jsonify({"message": "Dados do veículo de saída salvos com sucesso."}), 201
         except Exception as e:
-            logging.error(f"Erro ao inserir dados do veículo: {str(e)}")
-            return jsonify({"error": "Erro ao inserir dados do veículo."}), 500
+            logging.error(f"Erro ao inserir dados do veículo de saída: {str(e)}")
+            return jsonify({"error": "Erro ao inserir dados do veículo de saída."}), 500
     else:
         logging.error("Informe todos os campos obrigatórios.")
         return jsonify({"error": "Informe todos os campos obrigatórios."}), 400
 
 
-# Endpoint para obter dados de veículos pelo modelo Saída
-@app.route("/Veiculos_saida/<modelo>", methods=["GET"])
-def get_vehicle_data_by_model_saida(modelo):
+# Endpoint para obter dados de veículos pela placa Saída
+@app.route("/Veiculos_saida/<placa>", methods=["GET"])
+def get_vehicle_data_by_placa_saida(placa):
     try:
-        ref = db.reference("/Veiculos_saida")  # Mudou para Veiculos_saida
-        query = ref.order_by_child("Modelo").equal_to(modelo).limit_to_first(1).get()
+        ref = db.reference("/Veiculos_saida")
+        query = ref.order_by_child("Placa").equal_to(placa).limit_to_first(1).get()
 
         if query:
             vehicle_data = list(query.values())[0]
-            logging.info(f"Dados do veículo encontrados para o modelo: {modelo}")
+            logging.info(f"Dados do veículo de saída encontrados para a placa: {placa}")
             return jsonify(vehicle_data), 200
         else:
-            logging.error(f"Veículo não encontrado com o modelo: {modelo}")
-            return jsonify({"error": "Veículo não encontrado."}), 404
+            logging.error(f"Veículo de saída não encontrado com a placa: {placa}")
+            return jsonify({"error": "Veículo de saída não encontrado."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do veículo: {str(e)}")
-        return jsonify({"error": "Erro ao buscar dados do veículo."}), 500
+        logging.error(f"Erro ao buscar dados do veículo de saída: {str(e)}")
+        return jsonify({"error": "Erro ao buscar dados do veículo de saída."}), 500
 
 
 if __name__ == "__main__":
