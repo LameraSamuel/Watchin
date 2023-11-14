@@ -8,7 +8,8 @@ import 'package:http/http.dart' as http;
 
 class Entrada extends StatefulWidget {
   String? recognizedText;
-  Entrada({super.key, this.recognizedText});
+  Entrada({Key? key, this.recognizedText}) : super(key: key);
+
   @override
   State<Entrada> createState() => _EntradaState();
 }
@@ -33,6 +34,48 @@ class _EntradaState extends State<Entrada> {
     dataController.text =
         "${DateTime.now().day}/${DateTime.now().month}/${DateTime.now().year}";
     horaController.text = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
+  }
+
+  void fetchModelo(String placa) async {
+    try {
+      final response = await http.get(Uri.parse(
+          'https://wdapi2.com.br/consulta/GPJ1534/0b03c72e243f3809d90524612e92948a?placa=$placa'));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final modelo = responseData['modelo'];
+
+        setState(() {
+          modeloController.text = modelo;
+        });
+      }
+    } on Exception catch (e) {
+      print('Erro ao buscar modelo do veículo: $e');
+    }
+  }
+
+  void fetchNome(String cpf) async {
+    final url =
+        'https://api.cpfcnpj.com.br/4fa6db123243984324f58d673a1c2ad8/9/$cpf';
+    try {
+      final response = await http.get(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final nome = responseData['nome'];
+
+        final nomeExibido = nome.length <= 30 ? nome : nome.substring(0, 30);
+
+        setState(() {
+          nomeController.text = nomeExibido;
+        });
+      } else {
+        print(
+            'Erro na solicitação: ${response.reasonPhrase} (${response.statusCode})');
+      }
+    } on Exception catch (e) {
+      print('Erro na solicitação: $e');
+    }
   }
 
   void verifyPlaca() async {
@@ -63,65 +106,22 @@ class _EntradaState extends State<Entrada> {
     }
   }
 
-  void fetchModelo(String placa) async {
-    try {
-      final response = await http.get(Uri.parse(
-          'https://wdapi2.com.br/consulta/GPJ1534/0b03c72e243f3809d90524612e92948a?placa=$placa'));
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-        final modelo = responseData['modelo'];
-
-        setState(() {
-          modeloController.text = modelo;
-        });
-      } else {
-        // print('Error fetching modelo: ${response.statusCode}');
-        // ScaffoldMessenger.of(context).showSnackBar(
-        //   const SnackBar(
-        //     content: Text('Erro ao buscar modelo do veículo'),
-        //   ),
-        // );
-      }
-    } on Exception {}
-  }
-
-  void fetchNome(String cpf) async {
-    final url =
-        'https://api.cpfcnpj.com.br/4fa6db123243984324f58d673a1c2ad8/9/$cpf';
-    try {
-      final response = await http.get(Uri.parse(url));
-
-      if (response.statusCode == 200) {
-        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
-        final nome = responseData['nome'];
-
-        final nomeExibido = nome.length <= 30 ? nome : nome.substring(0, 30);
-
-        setState(() {
-          nomeController.text = nomeExibido;
-        });
-      } else {
-        print(
-            'Erro na solicitação: ${response.reasonPhrase} (${response.statusCode})');
-      }
-    } on Exception catch (e) {
-      print('Erro na solicitação: $e');
-    }
-  }
-
   Future<bool> enviarDadosParaEndpoint() async {
     final url = Uri.parse('http://192.168.0.18:5000/veiculos_entrada');
+
+    final dataEntrada =
+        "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
+
+    final horarioEntrada = "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}";
 
     final body = {
       "placa": placaController.text,
       "modelo": modeloController.text,
-      "data_entrada":
-          "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}T${TimeOfDay.now().hour}:${TimeOfDay.now().minute}:00Z",
-      "horario_entrada": "${TimeOfDay.now().hour}:${TimeOfDay.now().minute}",
+      "data_entrada": dataEntrada,
+      "horario_entrada": horarioEntrada,
       "documento_motorista": cpfController.text,
       "nome_motorista": nomeController.text,
-      "CampoInt": "1",
+      "campo_int": 1,
     };
 
     final headers = {'Content-Type': 'application/json'};

@@ -29,19 +29,12 @@ class _SaidaState extends State<Saida> {
   @override
   void initState() {
     super.initState();
+    verifyPlaca();
 
     dataSaidaController.text =
-        "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
+        "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
     horarioSaidaController.text =
         "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}";
-
-    placaController.addListener(() {
-      if (placaController.text.isNotEmpty) {
-        preencherCamposComDados(placaController.text);
-      }
-    });
-
-    verifyPlaca();
   }
 
   void preencherCamposComDados(String placa) async {
@@ -74,23 +67,14 @@ class _SaidaState extends State<Saida> {
           }
 
           setState(() {
-            dataSaidaController.clear();
-            horarioSaidaController.clear();
-            placaController.clear();
-            modeloVeiculoController.clear();
-            dataEntradaController.clear();
-            horarioEntradaController.clear();
-            documentoMotoristaController.clear();
-            nomeMotoristaController.clear();
-
             dataSaidaController.text =
-                "${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}";
+                "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
             horarioSaidaController.text =
                 "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}";
             placaController.text = veiculo['Placa'];
             modeloVeiculoController.text = veiculo['Modelo'];
             dataEntradaController.text =
-                "${dataEntrada?.year}-${dataEntrada?.month.toString().padLeft(2, '0')}-${dataEntrada?.day.toString().padLeft(2, '0')}";
+                "${dataEntrada?.day.toString().padLeft(2, '0')}/${dataEntrada?.month.toString().padLeft(2, '0')}/${dataEntrada?.year}";
             horarioEntradaController.text =
                 "${horarioEntrada?.hour.toString().padLeft(2, '0')}:${horarioEntrada?.minute.toString().padLeft(2, '0')}";
             documentoMotoristaController.text = veiculo['DocumentoMotorista'];
@@ -139,15 +123,15 @@ class _SaidaState extends State<Saida> {
     final url = Uri.parse('http://192.168.0.18:5000/veiculos_saida');
 
     final body = {
-      "data_saida": dataSaidaController.text,
-      "horario_saida": horarioSaidaController.text,
-      "placa": placaController.text,
-      "modelo": modeloVeiculoController.text,
-      "data_entrada": dataEntradaController.text,
-      "horario_entrada": horarioEntradaController.text,
-      "documento_motorista": documentoMotoristaController.text,
-      "nome_motorista": nomeMotoristaController.text,
-      "CampoInt": "0",
+      "data_saida": "${dataSaidaController.text.trim()}",
+      "horario_saida": "${horarioSaidaController.text.trim()}",
+      "placa": "${placaController.text.trim()}",
+      "modelo": "${modeloVeiculoController.text.trim()}",
+      "data_entrada": "${dataEntradaController.text.trim()}",
+      "horario_entrada": "${horarioEntradaController.text.trim()}",
+      "documento_motorista": "${documentoMotoristaController.text.trim()}",
+      "nome_motorista": "${nomeMotoristaController.text.trim()}",
+      "campo_int": 0,
     };
 
     print("Dados enviados para o backend: $body");
@@ -224,6 +208,11 @@ class _SaidaState extends State<Saida> {
                             ),
                             Line(
                               hintText: 'PLACA',
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  preencherCamposComDados(value);
+                                }
+                              },
                               controller: placaController,
                             ),
                             Line(
