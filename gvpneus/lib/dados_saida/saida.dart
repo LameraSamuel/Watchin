@@ -121,16 +121,17 @@ class _SaidaState extends State<Saida> {
 
   Future<bool> enviarDadosParaEndpoints() async {
     final url = Uri.parse('http://192.168.0.18:5000/veiculos_saida');
+    final placa = placaController.text.trim();
 
     final body = {
-      "data_saida": "${dataSaidaController.text.trim()}",
-      "horario_saida": "${horarioSaidaController.text.trim()}",
-      "placa": "${placaController.text.trim()}",
-      "modelo": "${modeloVeiculoController.text.trim()}",
-      "data_entrada": "${dataEntradaController.text.trim()}",
-      "horario_entrada": "${horarioEntradaController.text.trim()}",
-      "documento_motorista": "${documentoMotoristaController.text.trim()}",
-      "nome_motorista": "${nomeMotoristaController.text.trim()}",
+      "data_saida": dataSaidaController.text.trim(),
+      "horario_saida": horarioSaidaController.text.trim(),
+      "placa": placa,
+      "modelo": modeloVeiculoController.text.trim(),
+      "data_entrada": dataEntradaController.text.trim(),
+      "horario_entrada": horarioEntradaController.text.trim(),
+      "documento_motorista": documentoMotoristaController.text.trim(),
+      "nome_motorista": nomeMotoristaController.text.trim(),
       "campo_int": 0,
     };
 
@@ -151,6 +152,21 @@ class _SaidaState extends State<Saida> {
         setState(() {
           dadosEnviadosComSucesso = true;
         });
+
+        // Chamada para atualizar o campo CampoInt do veículo recém-inserido
+        final urlUpdate =
+            Uri.parse('http://192.168.0.18:5000/veiculos_entrada/$placa');
+        final updateBody = {"campo_int": 1};
+
+        final updateResponse = await http.put(
+          urlUpdate,
+          headers: headers,
+          body: json.encode(updateBody),
+        );
+
+        print(
+            "Resposta do servidor para a atualização: ${updateResponse.body}");
+
         return true;
       } else {
         return false;

@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -16,7 +17,7 @@ firebase_admin.initialize_app(
 )
 
 
-# Endpoint para salvar dados de login
+# Endpoint to save login data
 @app.route("/login", methods=["POST"])
 def save_login_data():
     data = request.json
@@ -28,22 +29,20 @@ def save_login_data():
             ref = db.reference("/LoginData")
             new_login_ref = ref.push()
             new_login_ref.set({"Username": username, "Password": password})
-            logging.info(
-                f"Dados de login salvos com sucesso para o usuário: {username}"
-            )
-            return jsonify({"message": "Dados de login salvos com sucesso."}), 201
+            logging.info(f"Login data saved successfully for user: {username}")
+            return jsonify({"message": "Login data saved successfully."}), 201
         except Exception as e:
-            logging.error(f"Erro ao inserir dados de login: {str(e)}")
-            return jsonify({"error": "Erro ao inserir dados de login."}), 500
+            logging.error(f"Error inserting login data: {str(e)}")
+            return jsonify({"error": "Error inserting login data."}), 500
     else:
-        logging.error("Informe um nome de usuário e uma senha válidos.")
+        logging.error("Provide a valid username and password.")
         return (
-            jsonify({"error": "Informe um nome de usuário e uma senha válidos."}),
+            jsonify({"error": "Provide a valid username and password."}),
             400,
         )
 
 
-# Endpoint para obter dados de login
+# Endpoint to get login data
 @app.route("/login/<username>", methods=["GET"])
 def get_login_data(username):
     try:
@@ -54,26 +53,28 @@ def get_login_data(username):
 
         if query:
             login_data = list(query.values())[0]
-            logging.info(f"Dados de login encontrados para o usuário: {username}")
+            logging.info(f"Login data found for user: {username}")
             return (
                 jsonify({"username": username, "password": login_data["Password"]}),
                 200,
             )
         else:
-            logging.error(f"Usuário não encontrado: {username}")
-            return jsonify({"error": "Usuário não encontrado."}), 404
+            logging.error(f"User not found: {username}")
+            return jsonify({"error": "User not found."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar dados de login: {str(e)}")
-        return jsonify({"error": "Erro ao buscar dados de login."}), 500
+        logging.error(f"Error fetching login data: {str(e)}")
+        return jsonify({"error": "Error fetching login data."}), 500
 
 
-# Endpoint para salvar dados de veículos Entrada
+# Endpoint to save vehicle entry data
 @app.route("/veiculos_entrada", methods=["POST"])
 def save_vehicle_data():
     data = request.json
     placa = data.get("placa")
     modelo = data.get("modelo")
-    data_entrada = data.get("data_entrada")
+    data_entrada = datetime.strptime(data.get("data_entrada"), "%d/%m/%Y").strftime(
+        "%Y-%m-%d"
+    )
     horario_entrada = data.get("horario_entrada")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
@@ -101,46 +102,63 @@ def save_vehicle_data():
                     "CampoInt": campo_int,
                 }
             )
-            logging.info("Dados do veículo de entrada salvos com sucesso.")
-            return jsonify({"message": "Dados do veículo de entrada salvos com sucesso."}), 201
+            logging.info("Vehicle entry data saved successfully.")
+            return (
+                jsonify({"message": "Vehicle entry data saved successfully."}),
+                201,
+            )
         except Exception as e:
-            logging.error(f"Erro ao inserir dados do veículo de entrada: {str(e)}")
-            return jsonify({"error": "Erro ao inserir dados do veículo de entrada."}), 500
+            logging.error(f"Error inserting vehicle entry data: {str(e)}")
+            return (
+                jsonify({"error": "Error inserting vehicle entry data."}),
+                500,
+            )
     else:
-        logging.error("Informe todos os campos obrigatórios.")
-        return jsonify({"error": "Informe todos os campos obrigatórios."}), 400
+        logging.error("Provide all mandatory fields.")
+        return jsonify({"error": "Provide all mandatory fields."}), 400
 
 
-# Endpoint para obter dados de veículos pela placa Entrada
-@app.route("/Veiculos_entrada/<placa>", methods=["GET"])
-def get_vehicle_data_by_placa_entrada(placa):
+# Endpoint to get vehicle data by plate and entry field
+@app.route("/Veiculos_entrada/<placa>/<int:campo_int>", methods=["GET"])
+def get_vehicle_data_by_placa_entrada(placa, campo_int):
     try:
         ref = db.reference("/Veiculos_entrada")
-        query = ref.order_by_child("Placa").equal_to(placa).limit_to_first(1).get()
+        data = ref.order_by_child("Placa").equal_to(placa).get()
 
-        if query:
-            vehicle_data = list(query.values())[0]
-            logging.info(f"Dados do veículo de entrada encontrados para a placa: {placa}")
-            return jsonify(vehicle_data), 200
+        # Filter results by campo_int
+        filtered_data = {
+            key: value
+            for key, value in data.items()
+            if value.get("CampoInt") == campo_int
+        }
+
+        if filtered_data:
+            return jsonify(filtered_data), 200
         else:
-            logging.error(f"Veículo de entrada não encontrado com a placa: {placa}")
-            return jsonify({"error": "Veículo de entrada não encontrado."}), 404
+            logging.error(
+                f"Vehicle entry not found with plate {placa} and CampoInt {campo_int}"
+            )
+            return jsonify({"error": "Vehicle entry not found."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do veículo de entrada: {str(e)}")
-        return jsonify({"error": "Erro ao buscar dados do veículo de entrada."}), 500
+        logging.error(f"Error fetching vehicle entry data: {str(e)}")
+        return jsonify({"error": "Error fetching vehicle entry data."}), 500
 
 
-# Endpoint para salvar dados de veículos Saída
+# Endpoint to save vehicle exit data
 @app.route("/veiculos_saida", methods=["POST"])
 def save_vehicle_data_saida():
     data = request.json
     placa = data.get("placa")
     modelo = data.get("modelo")
-    data_entrada = data.get("data_entrada")
+    data_entrada = datetime.strptime(data.get("data_entrada"), "%d/%m/%Y").strftime(
+        "%Y-%m-%d"
+    )
     horario_entrada = data.get("horario_entrada")
     documento_motorista = data.get("documento_motorista")
     nome_motorista = data.get("nome_motorista")
-    data_saida = data.get("data_saida")
+    data_saida = datetime.strptime(data.get("data_saida"), "%d/%m/%Y").strftime(
+        "%Y-%m-%d"
+    )
     horario_saida = data.get("horario_saida")
 
     if (
@@ -168,17 +186,23 @@ def save_vehicle_data_saida():
                     "HorarioSaida": horario_saida,
                 }
             )
-            logging.info("Dados do veículo de saída salvos com sucesso.")
-            return jsonify({"message": "Dados do veículo de saída salvos com sucesso."}), 201
+            logging.info("Vehicle exit data saved successfully.")
+            return (
+                jsonify({"message": "Vehicle exit data saved successfully."}),
+                201,
+            )
         except Exception as e:
-            logging.error(f"Erro ao inserir dados do veículo de saída: {str(e)}")
-            return jsonify({"error": "Erro ao inserir dados do veículo de saída."}), 500
+            logging.error(f"Error inserting vehicle exit data: {str(e)}")
+            return (
+                jsonify({"error": "Error inserting vehicle exit data."}),
+                500,
+            )
     else:
-        logging.error("Informe todos os campos obrigatórios.")
-        return jsonify({"error": "Informe todos os campos obrigatórios."}), 400
+        logging.error("Provide all mandatory fields.")
+        return jsonify({"error": "Provide all mandatory fields."}), 400
 
 
-# Endpoint para obter dados de veículos pela placa Saída
+# Endpoint to get vehicle data by plate on exit
 @app.route("/Veiculos_saida/<placa>", methods=["GET"])
 def get_vehicle_data_by_placa_saida(placa):
     try:
@@ -187,14 +211,48 @@ def get_vehicle_data_by_placa_saida(placa):
 
         if query:
             vehicle_data = list(query.values())[0]
-            logging.info(f"Dados do veículo de saída encontrados para a placa: {placa}")
+            logging.info(f"Vehicle exit data found for plate: {placa}")
             return jsonify(vehicle_data), 200
         else:
-            logging.error(f"Veículo de saída não encontrado com a placa: {placa}")
-            return jsonify({"error": "Veículo de saída não encontrado."}), 404
+            logging.error(f"Vehicle exit not found with plate: {placa}")
+            return jsonify({"error": "Vehicle exit not found."}), 404
     except Exception as e:
-        logging.error(f"Erro ao buscar dados do veículo de saída: {str(e)}")
-        return jsonify({"error": "Erro ao buscar dados do veículo de saída."}), 500
+        logging.error(f"Error fetching vehicle exit data: {str(e)}")
+        return jsonify({"error": "Error fetching vehicle exit data."}), 500
+
+
+# Endpoint para atualizar CampoInt de um veículo pelo número da placa
+@app.route("/veiculos_entrada/<placa>", methods=["PUT"])
+def update_vehicle_campoint(placa):
+    try:
+        ref = db.reference("/Veiculos_entrada")
+        data = ref.order_by_child("Placa").equal_to(placa).get()
+
+        # Verifica se algum veículo corresponde à placa e CampoInt é 1
+        vehicle_id = None
+        for key, value in data.items():
+            if value.get("CampoInt") == 1:
+                vehicle_id = key
+                break
+
+        if vehicle_id:
+            # Atualiza CampoInt para 2 (ou qualquer outro valor desejado)
+            ref.child(vehicle_id).update({"CampoInt": 0})
+            logging.info(f"CampoInt updated for vehicle with plate {placa}")
+            return (
+                jsonify(
+                    {"message": f"CampoInt updated for vehicle with plate {placa}"}
+                ),
+                200,
+            )
+        else:
+            logging.error(
+                f"No vehicle found with plate {placa} and CampoInt equal to 1"
+            )
+            return jsonify({"error": "No vehicle found with specified conditions"}), 404
+    except Exception as e:
+        logging.error(f"Error updating CampoInt: {str(e)}")
+        return jsonify({"error": "Error updating CampoInt"}), 500
 
 
 if __name__ == "__main__":
