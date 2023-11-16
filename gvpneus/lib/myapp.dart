@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gvpneus/Relatorio/Relatorio.dart';
+import 'package:gvpneus/Relatorio/relatorio.dart';
 import 'package:gvpneus/consulta/consulta.dart';
 import 'package:gvpneus/dados_entrada/entrada.dart';
 import 'package:gvpneus/dados_saida/saida.dart';

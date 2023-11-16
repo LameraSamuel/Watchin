@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Button_rel/button.dart';
-import 'package:gvpneus/Line/line.dart';
-import 'package:gvpneus/snackbar1/snackbar1.dart';
+import 'package:gvpneus/profilebar/profilebar.dart';
 
 class Rel extends StatefulWidget {
   const Rel({Key? key}) : super(key: key);
@@ -93,57 +91,17 @@ class _RelState extends State<Rel> {
                         SingleChildScrollView(
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
+                            child: Expanded(
+                              child: SizedBox(
+                                height: 500,
+                                child: ListView.builder(
+                                  itemBuilder: ((context, index) => Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: But(hintText: 'PLACA $index'),
+                                      )),
+                                  itemCount: 25,
                                 ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: But(
-                                    hintText: 'PLACA',
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                         ),
