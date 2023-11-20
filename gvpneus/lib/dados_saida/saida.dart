@@ -38,7 +38,8 @@ class _SaidaState extends State<Saida> {
   }
 
   void preencherCamposComDados(String placa) async {
-    final url = Uri.parse('http://192.168.0.18:5000/Veiculos_entrada/$placa/1');
+    final url =
+        Uri.parse('http://192.168.10.192:5000/Veiculos_entrada/$placa/1');
 
     try {
       final response = await http.get(url);
@@ -120,7 +121,7 @@ class _SaidaState extends State<Saida> {
   }
 
   Future<bool> enviarDadosParaEndpoints() async {
-    final url = Uri.parse('http://192.168.0.18:5000/veiculos_saida');
+    final url = Uri.parse('http://192.168.10.192:5000/veiculos_saida');
     final placa = placaController.text.trim();
 
     final body = {
@@ -155,7 +156,7 @@ class _SaidaState extends State<Saida> {
 
         // Chamada para atualizar o campo CampoInt do veículo recém-inserido
         final urlUpdate =
-            Uri.parse('http://192.168.0.18:5000/veiculos_entrada/$placa');
+            Uri.parse('http://192.168.10.192:5000/veiculos_entrada/$placa');
         final updateBody = {"campo_int": 1};
 
         final updateResponse = await http.put(

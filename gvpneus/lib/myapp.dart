@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gvpneus/Relatorio/relatorio.dart';
-import 'package:gvpneus/consulta/consulta.dart';
 import 'package:gvpneus/dados_entrada/entrada.dart';
 import 'package:gvpneus/dados_saida/saida.dart';
 import 'package:gvpneus/home/home.dart';
@@ -25,7 +24,6 @@ class _MyAppState extends State<MyApp> {
         '/Entrada': (context) => Entrada(),
         '/Saida': (context) => Saida(),
         '/Rel': (context) => const Rel(),
-        '/Consulta': (context) => const Consulta(),
       },
     );
   }

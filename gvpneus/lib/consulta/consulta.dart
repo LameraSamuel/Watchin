@@ -1,10 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/Line2/Line2.dart';
+import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:gvpneus/snackbar2/snackbar2.dart';
 
 class Consulta extends StatefulWidget {
-  const Consulta({super.key});
+  String data_saida;
+  String horario_saida;
+  String data_entrada;
+  String horario_entrada;
+  String placa;
+  String modelo;
+  String documento;
+  String nome;
+  //string teste;
+
+  Consulta(
+      {required this.data_entrada,
+      required this.data_saida,
+      required this.horario_saida,
+      required this.horario_entrada,
+      required this.placa,
+      required this.modelo,
+      required this.documento,
+      required this.nome,
+      super.key});
 
   @override
   State<Consulta> createState() => _ConsultaState();
@@ -37,7 +56,7 @@ class _ConsultaState extends State<Consulta> {
                     child: Center(
                       child: SingleChildScrollView(
                         child: Column(
-                          children: const [
+                          children: [
                             Padding(
                               padding: EdgeInsets.only(top: 20, bottom: 20),
                               child: Text(
@@ -49,34 +68,32 @@ class _ConsultaState extends State<Consulta> {
                               ),
                             ),
                             Line2(
-                              displayText: 'DATA SAIDA:',
+                              displayText: 'DATA SAIDA: ${widget.data_saida}',
                             ),
                             Line2(
-                              displayText: 'HORARIO SAIDA:',
+                              displayText:
+                                  'HORARIO SAIDA: ${widget.horario_saida}',
                             ),
                             Line2(
-                              displayText: 'DATA ENTRADA:',
+                              displayText:
+                                  'DATA ENTRADA: ${widget.data_entrada}',
                             ),
                             Line2(
-                              displayText: 'HORARIO ENTRADA:',
+                              displayText:
+                                  'HORARIO ENTRADA: ${widget.horario_entrada}',
                             ),
                             Line2(
-                              displayText: 'PLACA:',
+                              displayText: 'PLACA: ${widget.placa}',
                             ),
                             Line2(
-                              displayText: 'MODELO VEICULO:',
+                              displayText: 'MODELO VEICULO: ${widget.modelo}',
                             ),
                             Line2(
-                              displayText: 'DOCUMENTO MOTORISTA:',
+                              displayText:
+                                  'DOCUMENTO MOTORISTA: ${widget.documento}',
                             ),
                             Line2(
-                              displayText: 'NOME MOTORISTA:',
-                            ),
-                            Line2(
-                              displayText: 'DOCUMENTO AJUDANTE:',
-                            ),
-                            Line2(
-                              displayText: 'NOME AJUDANTE:',
+                              displayText: 'NOME MOTORISTA: ${widget.nome}',
                             ),
                           ],
                         ),

@@ -17,7 +17,6 @@ firebase_admin.initialize_app(
 )
 
 
-# Endpoint to save login data
 @app.route("/login", methods=["POST"])
 def save_login_data():
     data = request.json
@@ -42,7 +41,6 @@ def save_login_data():
         )
 
 
-# Endpoint to get login data
 @app.route("/login/<username>", methods=["GET"])
 def get_login_data(username):
     try:
@@ -66,7 +64,6 @@ def get_login_data(username):
         return jsonify({"error": "Error fetching login data."}), 500
 
 
-# Endpoint to save vehicle entry data
 @app.route("/veiculos_entrada", methods=["POST"])
 def save_vehicle_data():
     data = request.json
@@ -118,7 +115,6 @@ def save_vehicle_data():
         return jsonify({"error": "Provide all mandatory fields."}), 400
 
 
-# Endpoint to get vehicle data by plate and entry field
 @app.route("/Veiculos_entrada/<placa>/<int:campo_int>", methods=["GET"])
 def get_vehicle_data_by_placa_entrada(placa, campo_int):
     try:
@@ -144,7 +140,6 @@ def get_vehicle_data_by_placa_entrada(placa, campo_int):
         return jsonify({"error": "Error fetching vehicle entry data."}), 500
 
 
-# Endpoint to save vehicle exit data
 @app.route("/veiculos_saida", methods=["POST"])
 def save_vehicle_data_saida():
     data = request.json
@@ -202,7 +197,6 @@ def save_vehicle_data_saida():
         return jsonify({"error": "Provide all mandatory fields."}), 400
 
 
-# Endpoint to get vehicle data by plate on exit
 @app.route("/Veiculos_saida/<placa>", methods=["GET"])
 def get_vehicle_data_by_placa_saida(placa):
     try:
@@ -221,14 +215,12 @@ def get_vehicle_data_by_placa_saida(placa):
         return jsonify({"error": "Error fetching vehicle exit data."}), 500
 
 
-# Endpoint para atualizar CampoInt de um veículo pelo número da placa
 @app.route("/veiculos_entrada/<placa>", methods=["PUT"])
 def update_vehicle_campoint(placa):
     try:
         ref = db.reference("/Veiculos_entrada")
         data = ref.order_by_child("Placa").equal_to(placa).get()
 
-        # Verifica se algum veículo corresponde à placa e CampoInt é 1
         vehicle_id = None
         for key, value in data.items():
             if value.get("CampoInt") == 1:
@@ -236,7 +228,6 @@ def update_vehicle_campoint(placa):
                 break
 
         if vehicle_id:
-            # Atualiza CampoInt para 2 (ou qualquer outro valor desejado)
             ref.child(vehicle_id).update({"CampoInt": 0})
             logging.info(f"CampoInt updated for vehicle with plate {placa}")
             return (
@@ -253,6 +244,30 @@ def update_vehicle_campoint(placa):
     except Exception as e:
         logging.error(f"Error updating CampoInt: {str(e)}")
         return jsonify({"error": "Error updating CampoInt"}), 500
+
+    from datetime import datetime
+
+
+@app.route("/veiculos_saida/data_entrada/<data_entrada>", methods=["GET"])
+def get_vehicle_data_by_data_entrada(data_entrada):
+    try:
+        ref = db.reference("/Veiculos_saida")
+        query = ref.order_by_child("DataEntrada").equal_to(data_entrada).get()
+
+        if query:
+            return jsonify(query), 200
+        else:
+            logging.error(f"No vehicles found with entry date: {data_entrada}")
+            return (
+                jsonify({"error": "No vehicles found with specified entry date"}),
+                404,
+            )
+    except Exception as e:
+        logging.error(f"Error fetching vehicle exit data by entry date: {str(e)}")
+        return (
+            jsonify({"error": "Error fetching vehicle exit data by entry date."}),
+            500,
+        )
 
 
 if __name__ == "__main__":
