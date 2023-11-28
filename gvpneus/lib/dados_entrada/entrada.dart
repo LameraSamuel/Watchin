@@ -107,7 +107,7 @@ class _EntradaState extends State<Entrada> {
   }
 
   Future<bool> enviarDadosParaEndpoint() async {
-    final url = Uri.parse('http://192.168.10.192:5000/veiculos_entrada');
+    final url = Uri.parse('http://Gvmatriz.dyndns.info:5000/veiculos_entrada');
 
     final dataEntrada =
         "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";

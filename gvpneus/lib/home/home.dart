@@ -144,8 +144,8 @@ class _LoginState extends State<Login> {
       return;
     }
 
-    final response =
-        await http.get(Uri.parse('http://192.168.10.192:5000/login/$email'));
+    final response = await http
+        .get(Uri.parse('http://Gvmatriz.dyndns.info:5000/login/$email'));
     final bodyMap = jsonDecode(utf8.decode(response.bodyBytes));
 
     if (response.statusCode == 200 && bodyMap['password'] == senha) {

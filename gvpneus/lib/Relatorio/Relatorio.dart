@@ -47,7 +47,7 @@ class _RelState extends State<Rel> {
           '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 
       String url =
-          'http://192.168.10.192:5000/veiculos_saida/data_entrada/$formattedDate';
+          'http://Gvmatriz.dyndns.info:5000/veiculos_saida/data_entrada/$formattedDate';
 
       try {
         var response = await http.get(Uri.parse(url));
