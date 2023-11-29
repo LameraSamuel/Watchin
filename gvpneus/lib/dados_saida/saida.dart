@@ -29,7 +29,7 @@ class _SaidaState extends State<Saida> {
   @override
   void initState() {
     super.initState();
-    verifyPlaca();
+    //verifyPlaca();
 
     dataSaidaController.text =
         "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
@@ -45,45 +45,67 @@ class _SaidaState extends State<Saida> {
       final response = await http.get(url);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final List responseData = jsonDecode(utf8.decode(response.bodyBytes));
 
-        if (responseData.isNotEmpty) {
-          final veiculo = responseData.values.first;
-
-          DateTime? dataEntrada;
-          DateTime? horarioEntrada;
-
-          try {
-            dataEntrada = DateTime.parse(veiculo['DataEntrada']);
-          } catch (e) {
-            print('Erro ao converter data de entrada: $e');
-          }
-
-          try {
-            horarioEntrada = DateTime.parse(
-              '1970-01-01T${veiculo['HorarioEntrada'].split(':').join(':00')}Z',
-            ).toLocal();
-          } catch (e) {
-            print('Erro ao converter horário de entrada: $e');
-          }
-
-          setState(() {
-            dataSaidaController.text =
-                "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
-            horarioSaidaController.text =
-                "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}";
-            placaController.text = veiculo['Placa'];
-            modeloVeiculoController.text = veiculo['Modelo'];
-            dataEntradaController.text =
-                "${dataEntrada?.day.toString().padLeft(2, '0')}/${dataEntrada?.month.toString().padLeft(2, '0')}/${dataEntrada?.year}";
-            horarioEntradaController.text =
-                "${horarioEntrada?.hour.toString().padLeft(2, '0')}:${horarioEntrada?.minute.toString().padLeft(2, '0')}";
-            documentoMotoristaController.text = veiculo['DocumentoMotorista'];
-            nomeMotoristaController.text = veiculo['NomeMotorista'];
-          });
-        } else {
+        if (responseData.isEmpty) {
           print('Nenhum dado encontrado para a placa $placa');
+          return;
         }
+
+        final Map<String, dynamic> veiculo = responseData[0];
+
+        DateTime? dataEntrada;
+        DateTime? horarioEntrada;
+
+        try {
+          final dataEntradaString = veiculo['DataEntrada'];
+          if (dataEntradaString != null) {
+            dataEntrada = DateTime.tryParse(dataEntradaString);
+          }
+        } catch (e) {
+          print('Erro ao converter data de entrada: $e');
+        }
+
+        try {
+          final horarioEntradaString = veiculo['HorarioEntrada']?.toString();
+          if (horarioEntradaString != null) {
+            // Extrai apenas a hora e os minutos de horarioEntradaString
+            final parts = horarioEntradaString.split(':');
+            if (parts.length >= 2) {
+              final hora = int.tryParse(parts[0]);
+              final minuto = int.tryParse(parts[1]);
+              if (hora != null && minuto != null) {
+                horarioEntrada = DateTime(
+                  1970,
+                  1,
+                  1,
+                  hora,
+                  minuto,
+                );
+              }
+            }
+          }
+        } catch (e) {
+          print('Erro ao converter horário de entrada: $e');
+        }
+
+        setState(() {
+          dataSaidaController.text =
+              "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
+          horarioSaidaController.text =
+              "${DateTime.now().hour.toString().padLeft(2, '0')}:${DateTime.now().minute.toString().padLeft(2, '0')}";
+          placaController.text = veiculo['Placa'] ?? '';
+          modeloVeiculoController.text = veiculo['Modelo'] ?? '';
+          dataEntradaController.text = dataEntrada != null
+              ? "${dataEntrada.day.toString().padLeft(2, '0')}/${dataEntrada.month.toString().padLeft(2, '0')}/${dataEntrada.year}"
+              : '';
+          horarioEntradaController.text = horarioEntrada != null
+              ? "${horarioEntrada.hour.toString().padLeft(2, '0')}:${horarioEntrada.minute.toString().padLeft(2, '0')}"
+              : '';
+          documentoMotoristaController.text =
+              veiculo['DocumentoMotorista'] ?? '';
+          nomeMotoristaController.text = veiculo['NomeMotorista'] ?? '';
+        });
       } else {
         print('Erro ao obter dados do veículo: ${response.statusCode}');
       }
@@ -92,33 +114,33 @@ class _SaidaState extends State<Saida> {
     }
   }
 
-  void verifyPlaca() async {
-    await Future.delayed(const Duration(milliseconds: 50));
-    if (widget.recognizedText!.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Erro ao escanear a placa'),
-            content: const Text(
-                'A placa não foi reconhecida. Insira-a maanualmente.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Fechar'),
-              ),
-            ],
-          );
-        },
-      );
-    } else {
-      setState(() {
-        placaController.text = widget.recognizedText!;
-      });
-    }
-  }
+  // void verifyPlaca() async {
+  //   await Future.delayed(const Duration(milliseconds: 50));
+  //   if (widget.recognizedText!.isEmpty) {
+  //     showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(
+  //           title: const Text('Erro ao escanear a placa'),
+  //           content: const Text(
+  //               'A placa não foi reconhecida. Insira-a maanualmente.'),
+  //           actions: <Widget>[
+  //             TextButton(
+  //               onPressed: () {
+  //                 Navigator.of(context).pop();
+  //               },
+  //               child: const Text('Fechar'),
+  //             ),
+  //           ],
+  //         );
+  //       },
+  //     );
+  //   } else {
+  //     setState(() {
+  //       placaController.text = widget.recognizedText!;
+  //     });
+  //   }
+  // }
 
   Future<bool> enviarDadosParaEndpoints() async {
     final url = Uri.parse('http://Gvmatriz.dyndns.info:5000/veiculos_saida');
@@ -156,7 +178,7 @@ class _SaidaState extends State<Saida> {
 
         // Chamada para atualizar o campo CampoInt do veículo recém-inserido
         final urlUpdate = Uri.parse(
-            'http://Gvmatriz.dyndns.info:5000/veiculos_entrada/$placa');
+            'http://Gvmatriz.dyndns.info:5000/veiculos_entrada/$placa/1');
         final updateBody = {"campo_int": 1};
 
         final updateResponse = await http.put(
@@ -226,7 +248,7 @@ class _SaidaState extends State<Saida> {
                             Line(
                               hintText: 'PLACA',
                               onChanged: (value) {
-                                if (value.isNotEmpty) {
+                                if (value.isNotEmpty && value.length >= 7) {
                                   preencherCamposComDados(value);
                                 }
                               },

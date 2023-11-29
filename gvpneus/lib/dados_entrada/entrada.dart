@@ -39,7 +39,7 @@ class _EntradaState extends State<Entrada> {
   void fetchModelo(String placa) async {
     try {
       final response = await http.get(Uri.parse(
-          'https://wdapi2.com.br/consulta/GPJ1534/0b03c72e243f3809d90524612e92948a?placa=$placa'));
+          'https://wdapi2.com.br/consulta/$placa/0b03c72e243f3809d90524612e92948a'));
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));

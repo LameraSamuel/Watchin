@@ -54,11 +54,10 @@ class _RelState extends State<Rel> {
 
         if (response.statusCode == 200 || response.statusCode == 201) {
           List<String> plates = [];
+          List<dynamic> data = json.decode(response.body);
 
-          Map<String, dynamic> data = json.decode(response.body);
-
-          data.forEach((key, entry) {
-            if (entry.containsKey("Placa")) {
+          data.forEach((entry) {
+            if (entry is Map<String, dynamic> && entry.containsKey("Placa")) {
               String placa = entry["Placa"];
               String dataEntrada = entry["DataEntrada"];
               String dataSaida = entry["DataSaida"];
@@ -115,7 +114,7 @@ class _RelState extends State<Rel> {
                 exibirBack: false,
               ),
             ),
-            Flexible(
+            Expanded(
               child: SingleChildScrollView(
                 child: Container(
                   width: double.infinity,
@@ -161,37 +160,32 @@ class _RelState extends State<Rel> {
                         const SizedBox(
                           height: 8.0,
                         ),
-                        SingleChildScrollView(
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Expanded(
-                              child: SizedBox(
-                                height: 500,
-                                child: ListView.builder(
-                                  itemBuilder: ((context, index) {
-                                    if (index < platesList.length) {
-                                      return Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: But(
-                                          hintText:
-                                              'PLACA: ${platesList[index]}',
-                                          data_entrada: data_entrada,
-                                          data_saida: data_saida,
-                                          horario_entrada: horario_entrada,
-                                          horario_saida: horario_saida,
-                                          modelo: modelo,
-                                          documento: documento,
-                                          nome: nome,
-                                          placa: platesList[index],
-                                        ),
-                                      );
-                                    } else {
-                                      return const SizedBox.shrink();
-                                    }
-                                  }),
-                                  itemCount: platesList.length + 1,
-                                ),
-                              ),
+                        Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: SizedBox(
+                            height: 500,
+                            child: ListView.builder(
+                              itemBuilder: ((context, index) {
+                                if (index < platesList.length) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: But(
+                                      hintText: 'PLACA: ${platesList[index]}',
+                                      data_entrada: data_entrada,
+                                      data_saida: data_saida,
+                                      horario_entrada: horario_entrada,
+                                      horario_saida: horario_saida,
+                                      modelo: modelo,
+                                      documento: documento,
+                                      nome: nome,
+                                      placa: platesList[index],
+                                    ),
+                                  );
+                                } else {
+                                  return const SizedBox.shrink();
+                                }
+                              }),
+                              itemCount: platesList.length + 1,
                             ),
                           ),
                         ),
