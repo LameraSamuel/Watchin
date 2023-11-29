@@ -179,7 +179,7 @@ class _SaidaState extends State<Saida> {
         // Chamada para atualizar o campo CampoInt do veículo recém-inserido
         final urlUpdate = Uri.parse(
             'http://Gvmatriz.dyndns.info:5000/veiculos_entrada/$placa/1');
-        final updateBody = {"campo_int": 1};
+        final updateBody = {"campo_int": 0}; // Correção aqui
 
         final updateResponse = await http.put(
           urlUpdate,
