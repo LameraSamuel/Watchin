@@ -29,7 +29,7 @@ class _SaidaState extends State<Saida> {
   @override
   void initState() {
     super.initState();
-    //verifyPlaca();
+    verifyPlaca();
 
     dataSaidaController.text =
         "${DateTime.now().day.toString().padLeft(2, '0')}/${DateTime.now().month.toString().padLeft(2, '0')}/${DateTime.now().year}";
@@ -114,33 +114,33 @@ class _SaidaState extends State<Saida> {
     }
   }
 
-  // void verifyPlaca() async {
-  //   await Future.delayed(const Duration(milliseconds: 50));
-  //   if (widget.recognizedText!.isEmpty) {
-  //     showDialog(
-  //       context: context,
-  //       builder: (BuildContext context) {
-  //         return AlertDialog(
-  //           title: const Text('Erro ao escanear a placa'),
-  //           content: const Text(
-  //               'A placa não foi reconhecida. Insira-a maanualmente.'),
-  //           actions: <Widget>[
-  //             TextButton(
-  //               onPressed: () {
-  //                 Navigator.of(context).pop();
-  //               },
-  //               child: const Text('Fechar'),
-  //             ),
-  //           ],
-  //         );
-  //       },
-  //     );
-  //   } else {
-  //     setState(() {
-  //       placaController.text = widget.recognizedText!;
-  //     });
-  //   }
-  // }
+  void verifyPlaca() async {
+    await Future.delayed(const Duration(milliseconds: 50));
+    if (widget.recognizedText!.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Erro ao escanear a placa'),
+            content: const Text(
+                'A placa não foi reconhecida. Insira-a maanualmente.'),
+            actions: <Widget>[
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Fechar'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      setState(() {
+        placaController.text = widget.recognizedText!;
+      });
+    }
+  }
 
   Future<bool> enviarDadosParaEndpoints() async {
     final url = Uri.parse('http://Gvmatriz.dyndns.info:5000/veiculos_saida');
