@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gvpneus/dados_entrada/entrada.dart';
 
 class ModuleCard extends StatelessWidget {
   const ModuleCard({
@@ -20,8 +19,8 @@ class ModuleCard extends StatelessWidget {
       height: 145,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Color.fromARGB(255, 255, 255, 255),
-        boxShadow: [
+        color: const Color.fromARGB(255, 255, 255, 255),
+        boxShadow: const [
           BoxShadow(
             color: Color.fromARGB(255, 255, 255, 255),
             spreadRadius: 3,

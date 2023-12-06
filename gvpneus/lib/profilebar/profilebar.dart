@@ -1,5 +1,4 @@
 //import 'dart:ffi';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 
@@ -47,7 +46,7 @@ class _ProfileBarState extends State<ProfileBar> {
             ],
           ),
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             color: Colors.white,
             iconSize: 30,
             onPressed: () {

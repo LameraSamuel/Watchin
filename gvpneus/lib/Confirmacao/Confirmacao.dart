@@ -18,10 +18,10 @@ class TelaConfirmacao extends StatelessWidget {
                 : Navigator.of(context).pushNamed("/homepage");
           },
           child: Container(
-            color: Color.fromARGB(255, 253, 207, 41),
+            color: const Color.fromARGB(255, 253, 207, 41),
             height: MediaQuery.of(context).size.height,
             width: MediaQuery.of(context).size.width,
-            child: Column(
+            child: const Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               // ignore: prefer_const_literals_to_create_immutables
@@ -34,14 +34,14 @@ class TelaConfirmacao extends StatelessWidget {
                       fontWeight: FontWeight.bold,
                       fontSize: 25),
                 ),
-                const Icon(
+                Icon(
                   Icons.check,
                   color: Colors.black,
                   size: 125,
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: const Text(
+                  padding: EdgeInsets.only(top: 15.0),
+                  child: Text(
                     'PRESSIONE A TELA PARA PROSSEGUIR',
                     textAlign: TextAlign.center,
                     style: TextStyle(

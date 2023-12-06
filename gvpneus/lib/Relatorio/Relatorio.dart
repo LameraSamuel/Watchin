@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:gvpneus/Button_rel/button.dart';
+import 'package:gvpneus/Relatorio/resultados.dart';
 import 'package:gvpneus/profilebar/profilebar.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,10 +54,11 @@ class _RelState extends State<Rel> {
         var response = await http.get(Uri.parse(url));
 
         if (response.statusCode == 200 || response.statusCode == 201) {
+          print("retorno = ${response.body}");
           List<String> plates = [];
           List<dynamic> data = json.decode(response.body);
 
-          data.forEach((entry) {
+          for (var entry in data) {
             if (entry is Map<String, dynamic> && entry.containsKey("Placa")) {
               String placa = entry["Placa"];
               String dataEntrada = entry["DataEntrada"];
@@ -67,6 +69,7 @@ class _RelState extends State<Rel> {
               String nomeConsulta = entry["NomeMotorista"];
               String documentoConsulta = entry["DocumentoMotorista"];
 
+              Resultados.fromJson(entry);
               plates.add(placa);
               data_entrada = dataEntrada;
               data_saida = dataSaida;
@@ -76,7 +79,7 @@ class _RelState extends State<Rel> {
               nome = nomeConsulta;
               documento = documentoConsulta;
             }
-          });
+          }
 
           setState(() {
             platesList = plates;
@@ -170,6 +173,7 @@ class _RelState extends State<Rel> {
                                   return Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: But(
+                                      indexClick: index,
                                       hintText: 'PLACA: ${platesList[index]}',
                                       data_entrada: data_entrada,
                                       data_saida: data_saida,

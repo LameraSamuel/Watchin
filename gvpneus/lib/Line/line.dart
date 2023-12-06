@@ -19,7 +19,7 @@ class Line extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: width,
         height: height,
         child: TextFormField(

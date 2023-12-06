@@ -4,6 +4,7 @@ import 'package:gvpneus/consulta/consulta.dart';
 class But extends StatefulWidget {
   But({
     Key? key,
+    required this.indexClick,
     required this.hintText,
     required this.data_entrada,
     required this.data_saida,
@@ -19,7 +20,9 @@ class But extends StatefulWidget {
 
   final String hintText;
   final double width;
+
   final double height;
+  int indexClick;
   String data_saida;
   String horario_saida;
   String data_entrada;
@@ -38,7 +41,7 @@ class _ButState extends State<But> {
   Widget build(BuildContext context) {
     return Center(
       child: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           width: widget.width,
           height: widget.height,
           child: GestureDetector(
@@ -47,6 +50,7 @@ class _ButState extends State<But> {
                   context,
                   MaterialPageRoute(
                     builder: (context) => Consulta(
+                        indexClick: widget.indexClick,
                         data_entrada: widget.data_entrada,
                         data_saida: widget.data_saida,
                         horario_saida: widget.horario_saida,
@@ -60,12 +64,12 @@ class _ButState extends State<But> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(6.0),
-                color: Color.fromARGB(255, 162, 161, 161),
+                color: const Color.fromARGB(255, 162, 161, 161),
               ),
               child: Center(
                 child: Text(
                   widget.hintText,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                   ),

@@ -17,7 +17,7 @@ class Line2 extends StatelessWidget {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Container(
+        child: SizedBox(
           width: width,
           height: height,
           child: ElevatedButton(
@@ -25,14 +25,13 @@ class Line2 extends StatelessWidget {
             style: ElevatedButton.styleFrom(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
-              ),
-              primary: Colors.white,
+              ), backgroundColor: Colors.white,
             ),
             child: Align(
               alignment: Alignment.centerLeft, // Alinha o texto à esquerda
               child: Text(
                 displayText,
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
